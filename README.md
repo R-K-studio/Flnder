@@ -21,7 +21,7 @@ npm run tauri:build
 
 This repository includes a workflow at `.github/workflows/build.yml`.
 
-It runs automatically when code is pushed to `main`, and it can also be started manually from the GitHub Actions page.
+It runs automatically when code is pushed to `main`, when a version tag like `v0.1.1` is pushed, and it can also be started manually from the GitHub Actions page.
 
 The workflow builds:
 
@@ -38,3 +38,16 @@ To download them:
 1. Open the repository Actions tab
 2. Open a successful `Build Desktop Apps` run
 3. Download the artifact for the platform you want
+
+## GitHub Releases
+
+When you push a tag that starts with `v`, for example:
+
+```bash
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+the same workflow also publishes installable files to the GitHub Releases page.
+
+Friends can then download builds directly from Releases instead of opening the Actions page.
