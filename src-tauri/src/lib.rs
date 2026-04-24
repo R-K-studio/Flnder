@@ -9,6 +9,7 @@ use std::{
     fs,
     path::{Path, PathBuf},
     sync::Arc,
+    time::Duration,
 };
 
 use ai::{AiClient, QuickAnswer};
@@ -28,6 +29,7 @@ use tauri::{
     AppHandle, Emitter, Manager, State, WebviewUrl, WebviewWindowBuilder, WindowEvent,
 };
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
+use tokio::time::sleep;
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
@@ -480,7 +482,12 @@ pub fn run() {
             setup_progress_window(&app_handle)?;
 
             if let Some(window) = app.get_webview_window("main") {
-                let _ = window.hide();
+                if cfg!(target_os = "windows") {
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                } else {
+                    let _ = window.hide();
+                }
             }
 
             let shortcut = settings.shortcut.clone();
@@ -671,36 +678,119 @@ async fn capture_to_temp(data_dir: &Path) -> Result<PathBuf> {
     let capture_dir = data_dir.join("captures");
     fs::create_dir_all(&capture_dir)?;
     let path = capture_dir.join(format!("capture-{}.png", Local::now().timestamp_millis()));
-    let status = tokio::process::Command::new("screencapture")
-        .arg("-i")
-        .arg(&path)
-        .status()
-        .await
-        .context("failed to run macOS screencapture")?;
+    if cfg!(target_os = "windows") {
+        capture_to_temp_windows(&path).await?;
+    } else {
+        let status = tokio::process::Command::new("screencapture")
+            .arg("-i")
+            .arg(&path)
+            .status()
+            .await
+            .context("failed to run macOS screencapture")?;
 
-    if !status.success() || !path.exists() {
-        return Err(anyhow!("capture was cancelled or failed"));
+        if !status.success() || !path.exists() {
+            return Err(anyhow!("capture was cancelled or failed"));
+        }
     }
 
     Ok(path)
 }
 
 async fn read_clipboard_text() -> Result<String> {
-    let output = tokio::process::Command::new("pbpaste")
-        .output()
-        .await
-        .context("failed to read macOS clipboard")?;
+    let text = if cfg!(target_os = "windows") {
+        let output = tokio::process::Command::new("powershell")
+            .args(["-NoProfile", "-Command", "Get-Clipboard -Raw"])
+            .output()
+            .await
+            .context("failed to read Windows clipboard")?;
 
-    if !output.status.success() {
-        return Err(anyhow!("failed to read clipboard text"));
-    }
+        if !output.status.success() {
+            return Err(anyhow!("failed to read clipboard text"));
+        }
 
-    let text = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        String::from_utf8_lossy(&output.stdout).trim().to_string()
+    } else {
+        let output = tokio::process::Command::new("pbpaste")
+            .output()
+            .await
+            .context("failed to read macOS clipboard")?;
+
+        if !output.status.success() {
+            return Err(anyhow!("failed to read clipboard text"));
+        }
+
+        String::from_utf8_lossy(&output.stdout).trim().to_string()
+    };
     if text.is_empty() {
         return Err(anyhow!("clipboard does not contain readable text"));
     }
 
     Ok(text)
+}
+
+async fn capture_to_temp_windows(path: &Path) -> Result<()> {
+    let clear_status = tokio::process::Command::new("powershell")
+        .args([
+            "-NoProfile",
+            "-STA",
+            "-Command",
+            "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::Clear()",
+        ])
+        .status()
+        .await
+        .context("failed to clear Windows clipboard before capture")?;
+
+    if !clear_status.success() {
+        return Err(anyhow!("failed to clear clipboard before starting capture"));
+    }
+
+    let launch_status = tokio::process::Command::new("cmd")
+        .args(["/C", "start", "", "ms-screenclip:"])
+        .status()
+        .await
+        .context("failed to launch Windows screen snipping")?;
+
+    if !launch_status.success() {
+        return Err(anyhow!("failed to launch Windows screen snipping"));
+    }
+
+    for _ in 0..180 {
+        if save_windows_clipboard_image(path).await? {
+            return Ok(());
+        }
+        sleep(Duration::from_millis(500)).await;
+    }
+
+    Err(anyhow!("capture was cancelled or no image was copied to the clipboard"))
+}
+
+async fn save_windows_clipboard_image(path: &Path) -> Result<bool> {
+    let escaped_path = path.display().to_string().replace('\'', "''");
+    let script = format!(
+        "$ErrorActionPreference = 'Stop'; \
+         Add-Type -AssemblyName System.Windows.Forms; \
+         Add-Type -AssemblyName System.Drawing; \
+         if ([System.Windows.Forms.Clipboard]::ContainsImage()) {{ \
+             $img = [System.Windows.Forms.Clipboard]::GetImage(); \
+             $img.Save('{escaped_path}', [System.Drawing.Imaging.ImageFormat]::Png); \
+             Write-Output 'saved'; \
+         }}"
+    );
+
+    let output = tokio::process::Command::new("powershell")
+        .args(["-NoProfile", "-STA", "-Command", &script])
+        .output()
+        .await
+        .context("failed to inspect Windows clipboard image")?;
+
+    if !output.status.success() {
+        return Err(anyhow!(
+            "failed to read screenshot from Windows clipboard: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+
+    Ok(String::from_utf8_lossy(&output.stdout).contains("saved") && path.exists())
 }
 
 fn spawn_finalize_job(app: AppHandle, job: PreparedSolveJob) {
