@@ -1,0 +1,352 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.hero-panel,
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.hero-panel {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1.4fr 0.9fr;
+  padding: 2rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.9rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.lede {
+  max-width: 58rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.status-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 1.25rem;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.22), transparent 40%),
+    linear-gradient(145deg, rgba(13, 34, 28, 0.92), rgba(21, 52, 43, 0.95));
+  color: #f2f1ea;
+}
+
+.status-card button {
+  grid-column: 1 / -1;
+}
+
+.status-card p {
+  margin-top: 0.35rem;
+  color: rgba(242, 241, 234, 0.74);
+}
+
+.status-dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-top: 0.25rem;
+  border-radius: 999px;
+  background: #d6f36a;
+  box-shadow: 0 0 0 6px rgba(214, 243, 106, 0.15);
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.panel {
+  padding: 1.5rem;
+}
+
+.panel-head,
+.job-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.panel-head {
+  margin-bottom: 1.25rem;
+}
+
+.panel-head span,
+.job-head span,
+.hint,
+.empty,
+.job-output {
+  color: var(--muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.provider-tip {
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(195, 88, 43, 0.22);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 243, 230, 0.9), rgba(255, 249, 242, 0.88));
+}
+
+.provider-tip strong {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.provider-tip p {
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+}
+
+.field span {
+  font-size: 0.92rem;
+  color: var(--muted-strong);
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 252, 244, 0.82);
+  padding: 0.95rem 1rem;
+  color: var(--text);
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid rgba(222, 107, 52, 0.28);
+  border-color: rgba(222, 107, 52, 0.5);
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.95rem 1.2rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease,
+    box-shadow 160ms ease;
+}
+
+button:hover:enabled {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.primary {
+  background: linear-gradient(135deg, #de6b34, #f09d5d);
+  color: white;
+  box-shadow: 0 12px 30px rgba(222, 107, 52, 0.2);
+}
+
+.secondary {
+  background: rgba(17, 27, 24, 0.08);
+  color: var(--text);
+}
+
+.course-list,
+.job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.course-card,
+.job-card {
+  width: 100%;
+  text-align: left;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: rgba(255, 252, 244, 0.82);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.course-card.active {
+  border-color: rgba(222, 107, 52, 0.55);
+  background: linear-gradient(180deg, rgba(255, 245, 233, 0.95), rgba(255, 250, 241, 0.95));
+}
+
+.course-card em {
+  color: var(--accent);
+  font-style: normal;
+  margin-top: 0.25rem;
+}
+
+.jobs {
+  min-height: 16rem;
+}
+
+.job-question,
+.job-answer {
+  margin: 0;
+}
+
+.job-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(29, 39, 36, 0.08);
+}
+
+.job-summary {
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.job-answer {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.job-translation {
+  color: var(--muted-strong);
+  font-style: italic;
+  margin: 0;
+}
+
+.warn {
+  color: #a1451e;
+}
+
+.ok {
+  color: #2b7048;
+}
+
+@media (max-width: 960px) {
+  .hero-panel,
+  .grid,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shell {
+    padding: 1rem;
+  }
+}
+
+.progress-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.55rem 0.65rem;
+  background:
+    radial-gradient(circle at top left, rgba(249, 230, 200, 0.65), transparent 45%),
+    linear-gradient(180deg, rgba(255, 250, 242, 0.96), rgba(244, 236, 223, 0.98));
+}
+
+.progress-shell h2 {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.progress-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
+  background: rgba(195, 88, 43, 0.14);
+  color: var(--accent);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.progress-percent,
+.progress-note,
+.progress-answer {
+  color: var(--muted);
+}
+
+.progress-percent {
+  font-size: 0.7rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 0.42rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(29, 39, 36, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #de6b34, #f0b56a);
+  transition: width 220ms ease;
+}
+
+.progress-note {
+  margin: 0;
+  font-size: 0.62rem;
+  line-height: 1.25;
+}
+
+.progress-answer {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.2;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.progress-shell.done .progress-fill {
+  background: linear-gradient(90deg, #3f9366, #8ccf8b);
+}
+
+.progress-shell.error .progress-fill {
+  background: linear-gradient(90deg, #bb3a3a, #e67f59);
+}

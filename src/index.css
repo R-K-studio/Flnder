@@ -1,0 +1,55 @@
+:root {
+  color: #1d2724;
+  background:
+    radial-gradient(circle at top, rgba(238, 212, 171, 0.45), transparent 40%),
+    linear-gradient(180deg, #f7f1e5 0%, #f3ecdf 36%, #efe8dc 100%);
+  font-family:
+    'Avenir Next',
+    'Helvetica Neue',
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --text: #1d2724;
+  --muted: #6e746f;
+  --muted-strong: #4d544e;
+  --accent: #c3582b;
+  --panel: rgba(255, 250, 242, 0.78);
+  --border: rgba(38, 48, 44, 0.11);
+  --shadow: 0 24px 60px rgba(77, 61, 35, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 4vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  max-width: 12ch;
+}
+
+h2 {
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
